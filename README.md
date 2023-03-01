@@ -1,2 +1,211 @@
-# devprompt
--
+# Note to self
+
+Setting up a nice developer prompt for me myself and I. The developer prompt is based on:
+
+* Git friendlyness
+* Windows Terminal
+* Powershell 7
+* Nice auto-completion with history et al
+* Nothing invented, basically based on what [Scott Hanselmann suggests](https://www.hanselman.com/blog/my-ultimate-powershell-prompt-with-oh-my-posh-and-the-windows-terminal)
+
+## Install Git for Windows
+
+Do this first. Can be found [here](https://gitforwindows.org/)
+
+## Install Windows Terminal
+
+Either find it in Microsoft Store or from the [release page on github](https://github.com/microsoft/terminal). Mind, that you can choose between:
+
+* Release (stable) or preview. 
+* You have to choose the right one for your operating system - Windows 10 or Windows 11.
+
+## Install Powershell 7
+
+Follow instructions [here](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3). This simple command line should do the job:
+
+```
+winget install --id Microsoft.Powershell --source winget
+```
+
+If Powershell 7 is not the default shell for Windows Terminal, you can set it via:
+
+![wt1](Assets/wt1.png)
+
+Select "Settings":
+
+![wt2](Assets/wt2.png)
+
+![wt3](Assets/wt3.png)
+
+The highligthed stuff is the Guid, that identifies Powershell 7 (to be found further down in the file).
+
+## Install Oh-my-posh
+
+Next, we should install oh-my-posh - for further details, see [here](https://ohmyposh.dev/docs/installation/windows). The short path is just to execute:
+
+```
+winget install JanDeDobbeleer.OhMyPosh -s winget
+```
+
+## Install Posh-git
+
+In a Powershell command prompt execute:
+
+```
+Install-Module Posh-Git
+```
+
+## Install Terminal-Icons
+
+In a Powershell command prompt execute:
+
+```
+Install-Module Terminal-Icons
+```
+
+## Install PSReadline
+
+In a Powershell command prompt execute:
+
+```
+Install-Module PSReadline -Force
+```
+
+## Fetch and utilize nerdy fonts
+
+Go to [NerdFont](https://www.nerdfonts.com/) and fetch Cove Nerd Fonts - can also be fetched directly [here](https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/CascadiaCode.zip). It's a zip-file, unpack it all, mark all files and install the lot.
+
+Do the following to utilize the right font in Windows Terminal:
+
+![wt4](Assets/wt4.png)
+![wt5](Assets/wt5.png)
+
+## Setting up the Powershell-profile and posh.json
+
+Make a local folder, called C:\Terminal. In this folder, create a blank file named posh.json:
+
+```
+cd c:\
+mkdir Terminal
+cd Terminal
+notepad posh.json
+```
+
+In this file, copy the following content:
+
+```
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#ff479c",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "style": "folder"
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "path"
+        },
+        {
+          "background": "#fffb38",
+          "foreground": "#193549",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "powerline",
+          "type": "git"
+        },
+        {
+          "background": "#6CA35E",
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "fetch_version": true
+          },
+          "style": "powerline",
+          "type": "dotnet"
+        },
+        {
+          "background": "#ffff66",
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "style": "powerline",
+          "type": "root"
+        },
+        {
+          "background": "#2e9599",
+          "background_templates": [
+            "{{ if gt .Code 0 }}#f1184c{{ end }}"
+          ],
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "powerline",
+          "trailing_diamond": "\ue0b4",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 2
+}
+```
+
+Save and close notepad.
+
+Finally create your Powershell-7 profile. In a Powershell-7 command line, you can see the name of the profile-file via:
+
+```
+echo $PROFILE
+```
+
+![wt6](Assets/wt6.png)
+
+Ensure using the Windows Explorer, that the full folder-path exists. Whether the file exists or not, edit it:
+
+![wt7](Assets/wt7.png)
+
+Enter the following content to the file:
+
+```
+Import-Module posh-git
+oh-my-posh --init --shell pwsh --config C:/Terminal/posh.json | Invoke-Expression
+# Import the Chocolatey Profile that contains the necessary code to enable
+# tab-completions to function for `choco`.
+# Be aware that if you are missing these lines from your profile, tab completion
+# for `choco` will not function.
+# See https://ch0.co/tab-completion for details.
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
+}
+Import-Module PSReadLine
+Import-Module Terminal-Icons
+
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -EditMode Windows
+
+#Set-PoshPrompt -Theme blue-owl
+```
+
+Save and close.
+
+## Start folder
+
+Since it is a developer prompt, set up the start folder by:
+
+![wt8](Assets/wt8.png)
