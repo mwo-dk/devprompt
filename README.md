@@ -209,3 +209,9 @@ Save and close.
 Since it is a developer prompt, set up the start folder by:
 
 ![wt8](Assets/wt8.png)
+
+![wt9](Assets/wt9.png)
+
+![wt10](Assets/wt10.png)
+
+![wt11](Assets/wt11.png)
